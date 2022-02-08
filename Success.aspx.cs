@@ -79,7 +79,14 @@ namespace SITConnect
                         {
                             lbl_userID.Text = reader["Email"].ToString();
 
-                            //cipherTextNRIC = (byte[])reader["Nric"];
+                        }
+                        if (reader["FirstName"] != DBNull.Value)
+                        {
+                            Label1.Text = reader["FirstName"].ToString();
+                        }
+                        if (reader["LastName"] != DBNull.Value)
+                        {
+                             Label2.Text = reader["LastName"].ToString();
                         }
                         if (reader["CreditCardInfo"] != DBNull.Value)
                         {
@@ -94,13 +101,11 @@ namespace SITConnect
                         {
                             IV = Convert.FromBase64String(reader["IV"].ToString());
 
-                            //cipherTextNRIC = (byte[])reader["Nric"];
                         }
                         if (reader["Key"] != DBNull.Value)
                         {
                             Key = Convert.FromBase64String(reader["Key"].ToString());
 
-                            //cipherTextNRIC = (byte[])reader["Nric"];
                         }
                     }
                     lbl_card.Text = decryptData(card);

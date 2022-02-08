@@ -10,8 +10,9 @@
     <form id="form1" runat="server">
     <div>
         <h2>User Profile</h2>
-        <asp:Image ID="Image1" runat="server" Height="100px" Width="100px" />
-        <h2>User ID : <asp:Label ID="lbl_userID" runat="server"></asp:Label>
+        <asp:Image ID="Image1" runat="server" Height="200px" Width="200px" />
+        <h2>User Name : <asp:Label ID="Label1" runat="server"></asp:Label>&nbsp;<asp:Label ID="Label2" runat="server"></asp:Label>
+        <h2>User Email : <asp:Label ID="lbl_userID" runat="server"></asp:Label>
         </h2>
         <h2>Credit Card Information :&nbsp;
             <asp:Label ID="lbl_card" runat="server"></asp:Label>
