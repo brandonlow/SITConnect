@@ -33,9 +33,9 @@ namespace SITConnect
         {
             string h = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
-            string sql = "select PasswordHash FROM Account WHERE Email=@USERID";
+            string sql = "select PasswordHash FROM Account WHERE Email=@Email";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@USERID", userid);
+            command.Parameters.AddWithValue("@Email", userid);
             try
             {
                 connection.Open();
@@ -67,9 +67,9 @@ namespace SITConnect
         {
             string s = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
-            string sql = "select PASSWORDSALT FROM ACCOUNT WHERE Email=@USERID";
+            string sql = "select PASSWORDSALT FROM ACCOUNT WHERE Email=@Email";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@USERID", userid);
+            command.Parameters.AddWithValue("@Email", userid);
             try
             {
                 connection.Open();
@@ -128,7 +128,7 @@ namespace SITConnect
 
             //To send a GET request to Google along with the response and Secret key.
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create
-           (" https://www.google.com/recaptcha/api/siteverify?secret=SecretCode &response=" + captchaResponse);
+           (" https://www.google.com/recaptcha/api/siteverify?secret=6Lfv9WIeAAAAAKJKy2MCQdRkD2Vra3Aerd0BqYHv &response=" + captchaResponse);
 
 
             try
@@ -167,8 +167,8 @@ namespace SITConnect
 
         protected void LoginMe(object sender, EventArgs e)
         {
-            string pwd = tb_pwd.Text.ToString().Trim();
-            string userid = tb_userid.Text.ToString().Trim();
+            string pwd = HttpUtility.HtmlEncode(tb_pwd.Text.ToString().Trim());
+            string userid = HttpUtility.HtmlEncode(tb_userid.Text.ToString().Trim());
             SHA512Managed hashing = new SHA512Managed();
             string dbHash = getDBHash(userid);
             string dbSalt = getDBSalt(userid);
@@ -185,18 +185,15 @@ namespace SITConnect
                         {
                             Session["LoggedIn"] = userid;
                             string guid = Guid.NewGuid().ToString();
-                            Session["AuidToken"] = guid;
+                            Session["AuthToken"] = guid;
                             Response.Cookies.Add(new HttpCookie("AuthToken", guid));
-                            Response.Redirect("Success.aspx", false);
+                            Response.Redirect("Homepage.aspx", false);
                         }
-
-
                         else
                         {
-                            //errorMsg = "Userid or password is not valid. Please try again.";
-                            Response.Redirect("Login.aspx");
+                            lblMessage.Text = "Userid or password is not valid. Please try again.";
+                            //Response.Redirect("Login.aspx");
                         }
-
                     }
                     else
                     {

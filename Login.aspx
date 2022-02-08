@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Login Form</title>
-             <script src="https://www.google.com/recaptcha/api.js?render=6LeOb2EeAAAAAB0F3yPY1ZwwtddvxnOLVPET5Ijc"></script>
+             <script src="https://www.google.com/recaptcha/api.js?render=6Lfv9WIeAAAAAKoeo6nDdbqdzYJFj6Eg2IblP41I"></script>
 
 </head>
 <body>
@@ -15,7 +15,7 @@
                 <legend>Login</legend>
                     <p>Email : <asp:TextBox ID="tb_userid" runat="server" Height="25px" Width="137px"></asp:TextBox></p>
               
-                    <p>Password : <asp:TextBox ID="tb_pwd" runat="server" Height="25px" Width="137px"></asp:TextBox></p>
+                    <p>Password : <asp:TextBox ID="tb_pwd" runat="server" Height="25px" Width="137px" TextMode="Password"></asp:TextBox></p>
                
                     <p><asp:Button ID="btn_login" runat="server" Text="Login" OnClick="LoginMe" Height="27px" Width="133px"/></p>
                     <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
@@ -30,10 +30,11 @@
     </form>
     <script>
      grecaptcha.ready(function () {
-         grecaptcha.execute('6LeOb2EeAAAAAB0F3yPY1ZwwtddvxnOLVPET5Ijc', { action: 'Login' }).then(function (token) {
+         grecaptcha.execute('6Lfv9WIeAAAAAKoeo6nDdbqdzYJFj6Eg2IblP41I', { action: 'Login' }).then(function (token) {
          document.getElementById("g-recaptcha-response").value = token;
          });
      });
-    </script>
+    </script>
+
 </body>
 </html>

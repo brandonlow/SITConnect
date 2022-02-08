@@ -86,7 +86,11 @@ namespace SITConnect
                             card = Convert.FromBase64String(reader["CreditCardInfo"].ToString());
 
                         }
-                        if (reader["IV"] != DBNull.Value)
+                        if (reader["Photo"] != DBNull.Value)
+                        {
+                            Image1.ImageUrl = "~/Images/" + Path.GetFileName(reader["Photo"].ToString());
+                        }
+                            if (reader["IV"] != DBNull.Value)
                         {
                             IV = Convert.FromBase64String(reader["IV"].ToString());
 

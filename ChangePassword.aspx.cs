@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -10,55 +11,51 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 
-using System.Text.RegularExpressions; // for Regular expression
-using System.Drawing; // for change of color
-using System.Diagnostics;
-using System.IO;
+using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace SITConnect
 {
-    public partial class Registration : System.Web.UI.Page
+    public partial class ChangePassword : System.Web.UI.Page
     {
         string MYDBConnectionString =
         System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
         static string finalHash;
         static string salt;
-        byte[] Key;
-        byte[] IV;
-
-        string firstname;
-        string lastname;
-        string creditcard;
-        string email;
+        string useremail;
         string password;
-        string DOB;
-
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (Session["LoggedIn"] != null && Session["AuthToken"] != null && Request.Cookies["AuthToken"] != null)
+            {
+                if (!Session["AuthToken"].ToString().Equals(Request.Cookies["AuthToken"].Value))
+                {
+                    Response.Redirect("Login.aspx", false);
+                }
+                else
+                {
+                    useremail = HttpContext.Current.Session["LoggedIn"].ToString();
+                    Debug.WriteLine(useremail);
+                }
+            }
         }
-        protected void createAccount()
+
+        protected void changePW()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("INSERT INTO Account VALUES(@FirstName,@LastName, @CreditCardInfo, @Email, @PasswordHash, @PasswordSalt, @DateofBirth, @Photo, @IV, @Key)"))
+                    using (SqlCommand cmd = new SqlCommand("UPDATE Account SET PasswordHash = @PasswordHash, PasswordSalt = @PasswordSalt WHERE Email = @Email;"))
                     {
                         using (SqlDataAdapter sda = new SqlDataAdapter())
                         {
                             cmd.CommandType = CommandType.Text;
-                            cmd.Parameters.AddWithValue("@FirstName", firstname.Trim());
-                            cmd.Parameters.AddWithValue("@LastName", lastname.Trim());
-                            cmd.Parameters.AddWithValue("@CreditCardInfo", Convert.ToBase64String(encryptData(creditcard.Trim())));
-                            cmd.Parameters.AddWithValue("@Email", email.Trim());
+                            cmd.Parameters.AddWithValue("@Email", Session["LoggedIn"]);
                             cmd.Parameters.AddWithValue("@PasswordHash", finalHash);
                             cmd.Parameters.AddWithValue("@PasswordSalt", salt);
-                            cmd.Parameters.AddWithValue("@DateofBirth", DOB.Trim());
-                            cmd.Parameters.AddWithValue("@Photo", tb_photo.FileName);
-                            cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
-                            cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
+
                             cmd.Connection = con;
                             try
                             {
@@ -85,30 +82,11 @@ namespace SITConnect
             }
         }
 
-        protected byte[] encryptData(string data)
-        {
-            byte[] cipherText = null;
-            try
-            {
-                RijndaelManaged cipher = new RijndaelManaged();
-                cipher.IV = IV;
-                cipher.Key = Key;
-                ICryptoTransform encryptTransform = cipher.CreateEncryptor();
-                byte[] plainText = Encoding.UTF8.GetBytes(data);
-                cipherText = encryptTransform.TransformFinalBlock(plainText, 0, plainText.Length);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally { }
-            return cipherText;
-        }
         protected void btn_Submit_Click(object sender, EventArgs e)
         {
             // implement codes for the button event
             // Extract data from textbox
-            int scores = checkPassword(tb_password.Text);
+            int scores = checkPassword(tb_pwd.Text);
             string status = "";
             switch (scores)
             {
@@ -130,38 +108,16 @@ namespace SITConnect
                 default:
                     break;
             }
-            lbl_pwdchecker.Text = "Status : " + status;
+            lblMessage.Text = "Status : " + status;
             if (scores < 4)
             {
-                lbl_pwdchecker.ForeColor = Color.Red;
+                lblMessage.ForeColor = Color.Red;
                 return;
             }
-            lbl_pwdchecker.ForeColor = Color.Green;
+            lblMessage.ForeColor = Color.Green;        
 
-            int mark = checkCard(tb_creditcard.Text);
-            string strength = "";
-            switch (mark)
-            {
-                case 1:
-                    strength = "Very Strong";
-                    break;
-                default:
-                    break;
-            }
-            Label1.Text = "Status : " + strength;
-            if (mark < 0)
-            {
-                Label1.ForeColor = Color.Red;
-                return;
-            }
-            Label1.ForeColor = Color.Green;
-
-            firstname = HttpUtility.HtmlEncode(tb_firstname.Text);
-            lastname = HttpUtility.HtmlEncode(tb_lastname.Text);
-            creditcard = HttpUtility.HtmlEncode(tb_creditcard.Text);
-            email = HttpUtility.HtmlEncode(tb_email.Text);
-            password = HttpUtility.HtmlEncode(tb_password.Text);
-            DOB = HttpUtility.HtmlEncode(tb_DOB.Text);
+            
+            password = HttpUtility.HtmlEncode(tb_pwd.Text);
 
             //string pwd = get value from your Textbox
             string pwd = password.ToString().Trim(); ;
@@ -178,25 +134,10 @@ namespace SITConnect
             finalHash = Convert.ToBase64String(hashWithSalt);
             RijndaelManaged cipher = new RijndaelManaged();
             cipher.GenerateKey();
-            Key = cipher.Key;
-            IV = cipher.IV;
-
-            string folderPath = Server.MapPath("~/Images/");
-
-            //Check whether Directory (Folder) exists.
-            if (!Directory.Exists(folderPath))
-            {
-                //If Directory (Folder) does not exists Create it.
-                Directory.CreateDirectory(folderPath);
-            }
-
-            //Save the File to the Directory (Folder).
-            tb_photo.SaveAs(folderPath + Path.GetFileName(tb_photo.FileName));
-
-            createAccount();
+            
+            changePW();
             Response.Redirect("Login.aspx", false);
         }
-
         private int checkPassword(string password)
         {
             int score = 0;
@@ -228,34 +169,5 @@ namespace SITConnect
             }
             return score;
         }
-        private int checkCard(string card)
-        {
-            int score = 0;
-
-            if (card.Length < 16)
-            {
-                return 1;
-            }
-            if (card.Length > 16)
-            {
-                return 1;
-            }
-            else
-            {
-                score = 1;
-            }
-            return score;
-        }
-        protected void Button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void tb_password_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
-    
 }

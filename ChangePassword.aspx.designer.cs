@@ -11,7 +11,7 @@ namespace SITConnect
 {
 
 
-    public partial class Success
+    public partial class ChangePassword
     {
 
         /// <summary>
@@ -24,30 +24,30 @@ namespace SITConnect
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// Image1 control.
+        /// tb_pwd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
+        protected global::System.Web.UI.WebControls.TextBox tb_pwd;
 
         /// <summary>
-        /// lbl_userID control.
+        /// btn_submit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl_userID;
+        protected global::System.Web.UI.WebControls.Button btn_submit;
 
         /// <summary>
-        /// lbl_card control.
+        /// lblMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl_card;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
     }
 }

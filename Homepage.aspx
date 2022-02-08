@@ -14,9 +14,13 @@
                 <br />
                 <asp:Label ID="lblMessage" runat="server" EnableViewState="false"></asp:Label>
                 <br />
+                <a class="button" href="/Success.aspx">View Profile</a>
+                <br />
+                <a class="button"  href="/ChangePassword.aspx">Change Password</a>
                 <br />
                 <asp:Button ID="btnLogout" runat="server" Text="Logout" OnClick="LogoutMe" Visible="false"/>
-
+                <br />
+                
             </fieldset>
         </div>
     </form>

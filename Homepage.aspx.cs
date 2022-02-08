@@ -23,7 +23,6 @@ namespace SITConnect
                     lblMessage.ForeColor = System.Drawing.Color.Green;
                     btnLogout.Visible = true;
                 }
-
             }
             else
             {
@@ -48,6 +47,10 @@ namespace SITConnect
                 Response.Cookies["AuthToken"].Value = string.Empty;
                 Response.Cookies["AuthToken"].Expires = DateTime.Now.AddMonths(-20);
             }
+        }
+        protected void UserProfile(object sender, EventArgs e)
+        {
+            Response.Redirect("Success.aspx", false);
         }
     }
 }
